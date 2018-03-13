@@ -11,6 +11,7 @@ Unity has a fairly in depth system for writing post effects through the use of '
 * Updated techniques from below to utilize the new built in unity_StereoEyeIndex shader keyword
 * Doesn't require reconstruction of a ray which can lose precision
 * No dependencies on anything! :)
+* Tested on Vive+Rift
 
 # Contents
 
