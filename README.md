@@ -12,6 +12,12 @@ Unity has a fairly in depth system for writing post effects through the use of '
 * Doesn't require reconstruction of a ray which can lose precision
 * No dependencies on anything! :)
 
+# Contents
+
+* Full repo is functioning unity project with demo that will work with / without vr 
+* worldspaceposteffect_withdemo.unitypackage contains code + demo scene 
+* worldspaceposteffect_withoutdemo.unitypackage contains just the code (1 shader + 1 c# component)
+
 # Credit
 
 Huge credit goes to the internet, especially here https://gamedev.stackexchange.com/questions/131978/shader-reconstructing-position-from-depth-in-vr-through-projection-matrix and here https://forum.unity.com/threads/solved-reconstruct-world-position-from-depth-texture-in-single-pass-stereo-vr.480003/. This repo is largely combining and expanding upon the hard work done by others, especially https://forum.unity.com/members/equalsequals.25126/.
