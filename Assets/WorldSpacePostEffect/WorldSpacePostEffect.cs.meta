@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: a86db33d92bc4b24b91bcfa02b1f869a
+timeCreated: 1520969980
+licenseType: Free
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - m_world_space_post_effect_shader: {fileID: 4800000, guid: 9da9cb36da9caa447bebb058e0bcdd0d,
+      type: 3}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
