@@ -21,10 +21,10 @@
 			sampler2D _CameraDepthTexture;
 
 			//view/projection matrices proved by VolumetricSphere.cs (in none vr, only left eye is used)
-			float4x4 _LeftEyeToWorld;
-			float4x4 _RightEyeToWorld;
-			float4x4 _LeftEyeProjection;
-			float4x4 _RightEyeProjection;
+			float4x4 _LeftWorldFromView;
+			float4x4 _RightWorldFromView;
+			float4x4 _LeftViewFromScreen;
+			float4x4 _RightViewFromScreen;
 
 			//simple vs output
 			struct v2f
@@ -55,13 +55,13 @@
 				float4x4 proj, eyeToWorld;
 				if (unity_StereoEyeIndex == 0)
 				{
-					proj = _LeftEyeProjection;
-					eyeToWorld = _LeftEyeToWorld;
+					proj = _LeftViewFromScreen;
+					eyeToWorld = _LeftWorldFromView;
 				}
 				else
 				{
-					proj = _RightEyeProjection;
-					eyeToWorld = _RightEyeToWorld;
+					proj = _RightViewFromScreen;
+					eyeToWorld = _RightWorldFromView;
 				}
 
 				//bit of matrix math to take the screen space coord (u,v,depth) and transform to world space

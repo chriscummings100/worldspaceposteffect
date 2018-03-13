@@ -39,12 +39,6 @@ public class WorldSpacePostEffect : MonoBehaviour
         }
     }
 
-    //matrices updated each frame
-    Matrix4x4 leftToWorld;
-    Matrix4x4 rightToWorld;
-    Matrix4x4 leftEye;
-    Matrix4x4 rightEye;
-
     //on validate just reads stereo mode
     private void OnValidate()
     {
@@ -75,35 +69,41 @@ public class WorldSpacePostEffect : MonoBehaviour
         //cache matrices so they can be used in render image step
         if (Camera.stereoEnabled)
         {
-            // Left and Right Eye inverse View Matrices
-            leftToWorld = Camera.GetStereoViewMatrix(Camera.StereoscopicEye.Left).inverse;
-            rightToWorld = Camera.GetStereoViewMatrix(Camera.StereoscopicEye.Right).inverse;
-            Material.SetMatrix("_LeftEyeToWorld", leftToWorld);
-            Material.SetMatrix("_RightEyeToWorld", rightToWorld);
+            // Both stereo eye inverse view matrices
+            Matrix4x4 left_world_from_view = Camera.GetStereoViewMatrix(Camera.StereoscopicEye.Left).inverse;
+            Matrix4x4 right_world_from_view = Camera.GetStereoViewMatrix(Camera.StereoscopicEye.Right).inverse;
 
-            leftEye = Camera.GetStereoProjectionMatrix(Camera.StereoscopicEye.Left);
-            rightEye = Camera.GetStereoProjectionMatrix(Camera.StereoscopicEye.Right);
+            // Both stereo eye inverse projection matrices, plumbed through GetGPUProjectionMatrix to compensate for render texture
+            Matrix4x4 left_screen_from_view = Camera.GetStereoProjectionMatrix(Camera.StereoscopicEye.Left);
+            Matrix4x4 right_screen_from_view = Camera.GetStereoProjectionMatrix(Camera.StereoscopicEye.Right);
+            Matrix4x4 left_view_from_screen = GL.GetGPUProjectionMatrix(left_screen_from_view, true).inverse;
+            Matrix4x4 right_view_from_screen = GL.GetGPUProjectionMatrix(right_screen_from_view, true).inverse;
 
-            // Compensate for RenderTexture...
-            leftEye = GL.GetGPUProjectionMatrix(leftEye, true).inverse;
-            rightEye = GL.GetGPUProjectionMatrix(rightEye, true).inverse;
             // Negate [1,1] to reflect Unity's CBuffer state
-            leftEye[1, 1] *= -1;
-            rightEye[1, 1] *= -1;
+            left_view_from_screen[1, 1] *= -1;
+            right_view_from_screen[1, 1] *= -1;
 
-            Material.SetMatrix("_LeftEyeProjection", leftEye);
-            Material.SetMatrix("_RightEyeProjection", rightEye);
+            // Store matrices
+            Material.SetMatrix("_LeftWorldFromView", left_world_from_view);
+            Material.SetMatrix("_RightWorldFromView", right_world_from_view);
+            Material.SetMatrix("_LeftViewFromScreen", left_view_from_screen);
+            Material.SetMatrix("_RightViewFromScreen", right_view_from_screen);
         }
         else
         {
-            leftToWorld = Camera.cameraToWorldMatrix;
-            Material.SetMatrix("_LeftEyeToWorld", leftToWorld);
+            // Main eye inverse view matrix
+            Matrix4x4 left_world_from_view = Camera.cameraToWorldMatrix;
 
-            leftEye = Camera.projectionMatrix;
-            leftEye = GL.GetGPUProjectionMatrix(leftEye, true).inverse;
-            leftEye[1, 1] *= -1;
+            // Inverse projection matrices, plumbed through GetGPUProjectionMatrix to compensate for render texture
+            Matrix4x4 screen_from_view = Camera.projectionMatrix;
+            Matrix4x4 left_view_from_screen = GL.GetGPUProjectionMatrix(screen_from_view, true).inverse;
 
-            Material.SetMatrix("_LeftEyeProjection", leftEye);
+            // Negate [1,1] to reflect Unity's CBuffer state
+            left_view_from_screen[1, 1] *= -1;
+
+            // Store matrices
+            Material.SetMatrix("_LeftWorldFromView", left_world_from_view);
+            Material.SetMatrix("_LeftViewFromScreen", left_view_from_screen);
         }
     }
 
